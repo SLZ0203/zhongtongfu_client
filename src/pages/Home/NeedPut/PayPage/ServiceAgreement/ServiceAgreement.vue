@@ -130,27 +130,11 @@
   .deal_wrap
     width 100%
     height 100%
-    padding 0 16px
     position fixed
     top 0
     left: 0
     z-index 1000
-    box-sizing border-box
     background rgba(255,255,255,1)
-    .header
-      width 100%
-      position relative
-      z-index 10000
-      text-align center
-      padding 30px 0 10px
-      background #fff
-      border-bottom 1px solid #E5EAF3
-      font-size 18px
-      font-family PingFangSC-Medium
-      font-weight 500
-      color rgba(58, 61, 74, 1)
-      .return
-        float left
     .scroll_wrap
       height 100%
       margin-top 16px
@@ -158,7 +142,8 @@
       .return
         position fixed
       .scroll_inner
-        padding-bottom 80px
+        padding 0 16px 80px
+        box-sizing border-box
         text-align left
         background #fff
         section

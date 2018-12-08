@@ -69,10 +69,9 @@
     .header
       width 100%
       height 64px
-      line-height 34px
       text-align: center
       background rgba(255, 255, 255, 1)
-      padding 30px 16px 0
+      padding 20px 16px
       box-sizing border-box
       position relative
       z-index 100

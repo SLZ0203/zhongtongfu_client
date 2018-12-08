@@ -18,7 +18,10 @@ import NewAddress from '../pages/Home/NeedPut/NewAddress/NewAddress'; //选择�
 import PayPage from '../pages/Home/NeedPut/PayPage/PayPage'; //支付页面
 import ServiceAgreement from '../pages/Home/NeedPut/PayPage/ServiceAgreement/ServiceAgreement';//服务协议页面
 import WaitOrderDetail from '../pages/Order/WaitOrderDetail/WaitOrderDetail'//待分配页面详情
-import ChargeBack from '../pages/Order/WaitOrderDetail/ChargeBack/ChargeBack'//申请退单页面
+import AwaitOrderDetail from '../pages/Order/AwaitOrderDetail/AwaitOrderDetail'//待施工页面详情
+import DaiquerenOrderDetail from '../pages/Order/DaiquerenOrderDetail/DaiquerenOrderDetail'//服务方案待确认页面详情
+import WaitPayOrderDetail from '../pages/Order/WaitPayOrderDetail/WaitPayOrderDetail'///待支付页面详情
+import ChargeBack from '../pages/Order/ChargeBack/ChargeBack'//申请退单页面
 import SubmitTrouble from '../pages/Order/BeingOrderDetail/SubmitTrouble/SubmitTrouble'//故障申报页面
 import BeingOrderDetail from '../pages/Order/BeingOrderDetail/BeingOrderDetail'//进行中页面详情
 import FinishOrderDetail from '../pages/Order/FinishOrderDetail/FinishOrderDetail'//已完成页面详情
@@ -149,7 +152,28 @@ export default new VueRouter({
       path: '/wait_detail',
       component: WaitOrderDetail,
       meta: {
-        keepAlive: true
+        keepAlive: false
+      }
+    },
+    {
+      path: '/await_orderdetail',
+      component: AwaitOrderDetail,
+      meta: {
+        keepAlive: false
+      }
+    },
+    {
+      path: '/daiqueren_orderdetail',
+      component: DaiquerenOrderDetail,
+      meta: {
+        keepAlive: false
+      }
+    },
+    {
+      path: '/waitpay_orderdetail',
+      component: WaitPayOrderDetail,
+      meta: {
+        keepAlive: false
       }
     },
     {

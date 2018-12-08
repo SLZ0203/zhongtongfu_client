@@ -6,11 +6,11 @@
     <ul class="order_list">
       <li class="order_item">
         <span class="order_text">订单号</span>
-        <span class="order_num">2018102111053</span>
+        <span class="order_num">{{orderInfo.orderId}}</span>
       </li>
       <li class="order_item">
         <span class="order_status">订单状态</span>
-        <span class="order_ing">施工中</span>
+        <span class="order_ing" :class="changeClass(orderInfo.orderStateName)">{{orderInfo.orderStateName}}</span>
       </li>
     </ul>
     <div class="title">服务方案</div>
@@ -19,21 +19,21 @@
         <li class="server_item" v-for="(server,index) in serverArr" :key="index">
           <div class="outer_wrap">
             <div>
-              <img :src="server.imgUrl" class="item_img">
-              <span class="name">{{server.shopName}}</span>
+              <img :src="server.prodImagePath" class="item_img">
+              <span class="name">{{server.prodName}}</span>
             </div>
             <div>
-              <span class="sum">x{{server.count}}</span>
-              <span class="price">￥{{server.price}}</span>
+              <span class="sum">x{{server.prodNum}}</span>
+              <span class="price">￥{{server.totalPrice}}</span>
             </div>
             <span class="triangle"></span>
           </div>
-          <ul class="item_list" v-show="server.itemList">
-            <li class="shop_item" v-for="(item, index) in server.itemList" :key="index">
-              <div class="name">{{item.shopName}}</div>
+          <ul class="item_list" v-show="server.prodMaterial">
+            <li class="shop_item" v-for="(item, index) in server.prodMaterial" :key="index">
+              <div class="name">{{item.materialName}}</div>
               <div class="count_wrap">
-                <span class="sum">x{{item.count}}</span>
-                <span class="price">￥{{item.price}}</span>
+                <span class="sum">x{{item.materialNum}}</span>
+                <span class="price">￥{{item.totalPrice}}</span>
               </div>
             </li>
           </ul>
@@ -45,6 +45,7 @@
 
 <script>
   import BScroll from 'better-scroll'
+  import {postURL, token} from '../../../../api'
 
   export default {
     name: "ServiceProjectDetail",
@@ -52,171 +53,41 @@
       return {
         title: '服务方案详情',
         isShow: false,
-        serverArr: [
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: '尊享版网组',
-            count: '1',
-            price: '800',
-          },
-          {
-            imgUrl: '../../../../static/images/商品图.jpg',
-            shopName: '百兆路由器',
-            count: '1',
-            price: '240',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: 'ap面板',
-            count: '1',
-            price: '239',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: '尊享版网组',
-            count: '1',
-            price: '800',
-          },
-          {
-            imgUrl: '../../../../static/images/商品图.jpg',
-            shopName: '百兆路由器',
-            count: '1',
-            price: '240',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: 'ap面板',
-            count: '1',
-            price: '239',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: '尊享版网组',
-            count: '1',
-            price: '800',
-          },
-          {
-            imgUrl: '../../../../static/images/商品图.jpg',
-            shopName: '百兆路由器',
-            count: '1',
-            price: '240',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: 'ap面板',
-            count: '1',
-            price: '239',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品图.jpg',
-            shopName: '百兆路由器',
-            count: '1',
-            price: '240',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-          {
-            imgUrl: '../../../../static/images/商品.jpg',
-            shopName: 'ap面板',
-            count: '1',
-            price: '239',
-            itemList: [
-              {
-                shopName: '百兆AP面板',
-                count: '2',
-                price: '200'
-              },
-              {
-                shopName: '百兆POE交换机',
-                count: '1',
-                price: '40'
-              },
-            ]
-          },
-        ]
+        orderInfo: this.$route.query.info, //订单号
+        serverArr: []
       }
+    },
+    created() {
+      const url = postURL + '/api/order/getOrderServiceDetail';
+      const {orderInfo} = this;
+      const id = orderInfo.orderId;
+      this.$axios.post(url, {
+          "data": id,
+          "requestId": new Date().getTime(),
+        },
+        {
+          headers: {
+            token
+          }
+        }).then(res => {
+        const result = res.data;
+        if (result.code === 200) {
+          this.serverArr = result.data;
+        }
+      })
+    },
+    methods:{
+      //改变状态框的背景色
+      changeClass(s) {
+        switch (s) {
+          case '待分配':
+            return 'pink';
+          case '施工中':
+            return 'yellow';
+          case '已完成':
+            return 'green';
+        }
+      },
     },
     mounted() {
       this.$nextTick(() => {
@@ -255,9 +126,14 @@
         line-height: 20px
       .order_ing
         font-weight: 400
-        color: $red
+        color: #f8a210
         line-height: 20px
-
+        &.pink
+          color: rgba(238, 81, 71, 1);
+        &.yellow
+          color: rgba(248, 162, 16, 1);
+        &.green
+          color: rgba(46, 171, 89, 1);
   .title
     width 100%
     height 48px

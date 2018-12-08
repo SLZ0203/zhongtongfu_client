@@ -1,10 +1,10 @@
 /*
     包含接口域名的模块
  */
+import axios from 'axios';
 
-export const postURL = 'http://ccss.domch.cn/app-api';
+export const postURL = 'http://domch.cn/app-api';
 
-export const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpblR5c' +
-  'GUiOiI5IiwiaXNzIjoienRmZ2ouY29tIiwiZXhwIjoxNTQ1MzYyMDM5LCJ1c2VySWQi' +
-  'OiI1MDc5OTQ3NjQ2Mjc5NjgiLCJpYXQiOjE1NDQwNjYwMzl9.L4hk6h8WvR7YrQSP0aI0bFBG' +
-  '7RCG3qWj3jsIDZCyv-M'
+export const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpblR5cGUiOiI5IiwiaXNzIjoienRmZ2ouY29tIiwiZXhwIjoxNTQ1Mzc1NTA4LCJ1c2VySWQiOiIxMDAwMDAwMDIiLCJpYXQiOjE1NDQwNzk1MDh9.vkfTvTi9-Q3KGfOoB8oN_0qFX_WWVM1tmit-aCAziz8'
+
+

@@ -1,61 +1,41 @@
 <!--服务方案列表-->
 <template>
-  <ul class="server_list">
+  <ul class="server_list" v-if="orderInfo">
     <li class="title">
       <span>服务方案</span>
-      <span class="see_more" @click="$router.push('/project_detail')">
+      <span class="see_more" @click="seeInfo">
         查看详情
         <img src="../../../static/images/icon_更多.png" alt="">
       </span>
     </li>
     <li class="things_item">
       <ul>
-        <li class="outer_wrap">
+        <li class="outer_wrap" v-for="(o,index) in orderInfo.orderService" :key="index">
           <div>
-            <img src="../../../static/images/商品.jpg" class="item_img">
-            <span class="name">尊享版网组</span>
+            <img :src="o.prodImagePath">
+            <span class="name">{{o.prodName}}</span>
           </div>
           <div>
-            <span class="sum">x1</span>
-            <span class="price">￥800</span>
-          </div>
-        </li>
-        <li class="outer_wrap">
-          <div>
-            <img src="../../../static/images/商品.jpg" class="item_img">
-            <span class="name">百兆路由器</span>
-          </div>
-          <div>
-            <span class="sum">x1</span>
-            <span class="price">￥800</span>
-          </div>
-        </li>
-        <li class="outer_wrap">
-          <div>
-            <img src="../../../static/images/商品.jpg" class="item_img">
-            <span class="name">ap面板</span>
-          </div>
-          <div>
-            <span class="sum">x1</span>
-            <span class="price">￥800</span>
+            <span class="sum">x{{o.prodNum}}</span>
+            <span class="price">￥{{o.totalPrice}}</span>
           </div>
         </li>
       </ul>
     </li>
     <li class="money_list">
       <span class="name">应付服务费</span>
-      <span class="money">￥1200</span>
+      <span class="money">￥{{orderInfo.serviceFee}}</span>
     </li>
     <li class="money_list">
-            <span>
-              <img src="../../../static/images/icon_抵扣.png" alt="">
-              <span>上门服务费抵扣</span>
-            </span>
-      <span class="money">-￥30</span>
+      <div>
+        <img src="../../../static/images/icon_抵扣.png" alt="">
+        <span>上门服务费抵扣</span>
+      </div>
+      <span class="money">-￥{{orderInfo.subscribeFee}}</span>
     </li>
     <li class="money_list">
       <span class="all_money">合计</span>
-      <span class="all">￥1200</span>
+      <span class="all">￥{{orderInfo.finalFee}}</span>
     </li>
   </ul>
 
@@ -63,7 +43,18 @@
 
 <script>
   export default {
-    name: "ServerProject"
+    name: "ServerProject",
+    props: {
+      orderInfo: Object
+    },
+    methods: {
+      seeInfo() {
+        this.$router.push({
+          path: '/project_detail',
+          query: {info: this.orderInfo}
+        })
+      }
+    }
   }
 </script>
 
@@ -86,8 +77,8 @@
       align-items center
       justify-content space-between
       .see_more
-        font-size:14px;
-        color:rgba(112,117,127,1);
+        font-size: 14px;
+        color: rgba(112, 117, 127, 1);
     .things_item
       bottom-border-1px($main)
       .outer_wrap

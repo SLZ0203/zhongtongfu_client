@@ -1,4 +1,4 @@
-<!--评价星星列表组件-->
+<!--评价页面星星列表组件-->
 <template>
   <ul class="star_list">
     <li class="star_item">

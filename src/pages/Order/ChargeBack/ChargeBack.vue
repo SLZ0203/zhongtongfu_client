@@ -4,12 +4,10 @@
     <TopHeader :title="title"/>
     <div class="scroll_wrap">
       <div>
-        <FinishOrderInfo>
-          <span slot="state" class="state">待确认上门</span>
-        </FinishOrderInfo>
+        <AllOrderInfo :orderInfo="orderInfo"/>
         <div class="back_sum">
           <span class="text">退单金额</span>
-          <span class="num">￥1700</span>
+          <span class="num">￥{{orderInfo.finalFee}}</span>
         </div>
         <div class="title">退单原因</div>
         <ul class="back_list">
@@ -27,7 +25,8 @@
           </li>
         </ul>
         <div class="text_wrap">
-          <textarea cols="30" rows="10" placeholder="请输入您的申报原因~"></textarea>
+          <p class="other">其他原因</p>
+          <textarea cols="30" rows="10" placeholder="请输入您的申报原因~" v-model="text"></textarea>
           <div class="photo_wrap">
             <div class="photo_"></div>
             <div>
@@ -42,20 +41,22 @@
         </div>
       </div>
     </div>
-    <div class="ft_btn">提交</div>
+    <div class="ft_btn" :class="{red: text.length>0}">提交</div>
   </section>
 </template>
 
 <script>
   import BScroll from 'better-scroll'
-  import FinishOrderInfo from '../../../../components/FinishOrderInfo/FinishOrderInfo'
-  import TextWrap from '../../../../components/TextWrap/TextWrap'
+  import AllOrderInfo from '../../../components/AllOrderInfo/AllOrderInfo'
+  import TextWrap from '../../../components/TextWrap/TextWrap'
 
   export default {
     name: "ChargeBack",
     data() {
       return {
-        title: '申请退单'
+        title: '申请退单',
+        text: '', //退单原因说明
+        orderInfo: this.$route.query.orderInfo
       }
     },
     mounted() {
@@ -65,20 +66,20 @@
         })
       })
     },
-    methods:{
-      change(e){
+    methods: {
+      change(e) {
         e.target.className = 'checked on'
       }
     },
     components: {
-      FinishOrderInfo,
+      AllOrderInfo,
       TextWrap
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-  @import "../../../../common/stylus/mixins.styl"
+  @import "../../../common/stylus/mixins.styl"
   .back_wrap
     width 100%
     height 100%
@@ -149,13 +150,19 @@
             width 20px
             height 20px
             display inline-block
-            background url("../../../../../static/images/icon_未选中（大）.png") no-repeat
+            background url("../../../../static/images/icon_未选中（大）.png") no-repeat
             &.on
-              background url("../../../../../static/images/icon_选中（大）.png") no-repeat
+              background url("../../../../static/images/icon_选中（大）.png") no-repeat
       .text_wrap
         width 100%
         padding 0 16px 48px 16px
         box-sizing border-box
+        background #fff
+        .other
+          font-size: 16px;
+          font-family: PingFangSC-Medium;
+          color: rgba(58, 61, 74, 1);
+          line-height: 48px;
         textarea
           width: 343px;
           height: 120px;
@@ -181,7 +188,7 @@
             background: rgba(249, 251, 254, 1);
             border-radius: 2px;
             border: 1px solid #D7DBE3;
-            background url("../../../../../static/images/icon_上传照片.png") no-repeat
+            background url("../../../../static/images/icon_上传照片.png") no-repeat
             background-position center center
             margin-right 8px
           .add
@@ -229,9 +236,11 @@
       bottom 0
       text-align: center
       line-height 50px
-      background:rgba(238,81,71,1);
-      color:rgba(255,255,255,1);
-      font-size:16px;
-      font-family:PingFangSC-Medium;
-      font-weight:500;
+      background: rgba(215, 219, 227, 1);
+      color: rgba(255, 255, 255, 1);
+      font-size: 16px;
+      font-family: PingFangSC-Medium;
+      font-weight: 500;
+      &.red
+        background: rgba(238, 81, 71, 1);
 </style>

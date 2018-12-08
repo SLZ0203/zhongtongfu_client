@@ -14,7 +14,7 @@
           </div>
           <div class="btn_wrap">
             <span @click="isShow=true">评 价</span>
-            <span @click="$router.push('/send_trouble')">故障申报</span>
+            <span @click="goSend">故障申报</span>
           </div>
         </div>
         <div class="rating_order" v-show="isShow">
@@ -22,14 +22,21 @@
           <p class="name">评价订单！</p>
           <div class="hint_msg">对该订单进行评论~</div>
           <div class="btn_wrap">
-            <span @click="$router.push('/send_trouble')">转申报</span>
+            <span @click="goSend">转申报</span>
           </div>
         </div>
-        <UserInfo/>
-        <FinishOrderInfo>
-          <span slot="state" class="state">已完成</span>
-        </FinishOrderInfo>
-        <ServerProject/>
+        <div class="user_info" v-if="orderInfo.engineerAvatar">
+          <div class="left_wrap">
+            <img :src="orderInfo.engineerAvatar" class="touxiang">
+            <div>
+              <p class="user_name">{{orderInfo.engineerName}}</p>
+              <Starlet :score=orderInfo.totalScore></Starlet>
+            </div>
+          </div>
+          <img src="../../../../static/images/icon__联系.png" alt="">
+        </div>
+        <AllOrderInfo :orderInfo="orderInfo"/>
+        <ServerProject :orderInfo="orderInfo"/>
         <div class="hint">提示：您的需求已经提交客服，正在为您匹配相应服务。请保持电话畅通，以便服务与您联系。</div>
         <OrderCourse/>
       </div>
@@ -43,19 +50,50 @@
 
 <script>
   import BScroll from 'better-scroll'
-  import FinishOrderInfo from '../../../components/FinishOrderInfo/FinishOrderInfo'
+  import AllOrderInfo from '../../../components/AllOrderInfo/AllOrderInfo'
   import ServerProject from '../../../components/ServerProject/ServerProject'
   import OrderCourse from '../../../components/OrderCourse/OrderCourse'
-  import UserInfo from '../../../components/UserInfo/UserInfo'
+  import Starlet from '../../../components/Starlet/Starlet'
   import Shade from '../../../components/Shade/Shade'
+  import {postURL, token} from '../../../api'
 
   export default {
-    name: "MyOrder",
+    name: "FinishOrderDetail",
     data() {
       return {
         title: '订单详情',
-        isShow: false
+        isShow: false,
+        orderId: this.$route.query.id,//订单号
+        orderInfo: {}
       }
+    },
+    methods: {
+      goSend() {
+        this.$router.push({
+          path: '/submit_trouble',
+          query: {orderInfo: this.orderInfo}
+        })
+      }
+    },
+    created() {
+      //获取订单详情的请求
+      const {orderId} = this;
+      const url = postURL + '/api/order/getOrderDetail';
+      this.$axios.post(url, {
+          "data": orderId,
+          "requestId": new Date().getTime(),
+        },
+        {
+          headers: {
+            token
+          }
+        }
+      ).then(res => {
+        const result = res.data;
+        if (result.code === 200) {
+          this.orderInfo = result.data;
+        }
+      });
     },
     mounted() {
       this.$nextTick(() => {
@@ -63,13 +101,14 @@
           click: true
         })
       })
-    },
+    }
+    ,
     components: {
-      FinishOrderInfo,
+      AllOrderInfo,
       OrderCourse,
       Shade,
       ServerProject,
-      UserInfo
+      Starlet
     }
   }
 </script>
@@ -83,7 +122,7 @@
     position relative
     .scroll_wrap
       width 100%
-      height 633px
+      height 610px
       overflow hidden
       &.height
         height 583px
@@ -162,7 +201,33 @@
             border-radius: 2px;
             border: 1px solid #D7DBE3;
       .state
-        color:rgba(46,171,89,1);
+        color: rgba(46,171,89,1);
+      .user_info
+        width 100%
+        display flex
+        justify-content space-between
+        align-items center
+        margin 8px 0
+        padding 13px 27px 13px 16px
+        box-sizing border-box
+        background: rgba(255, 255, 255, 1);
+        .touxiang
+          width: 40px;
+          height: 40px;
+          border-radius 50%
+          margin-right 8px
+        .left_wrap
+          height 100%
+          display flex
+          align-items center
+          .user_name
+            font-size: 14px;
+            font-family: PingFangSC-Medium;
+            font-weight: 500;
+            color: rgba(58, 61, 74, 1);
+            line-height: 20px;
+            margin-bottom 3px
+
       .hint
         width 100%
         padding 0 16px
@@ -182,16 +247,16 @@
       position fixed
       bottom 0
       display flex
-      .yes,.no
+      .yes, .no
         width 50%
         height 50px
         line-height 50px
         text-align: center
-        font-size:16px;
-        font-weight:500;
-        color:rgba(255,255,255,1);
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
       .no
-        background:rgba(51,57,75,1);
+        background: rgba(51, 57, 75, 1);
       .yes
-        background:rgba(238,81,71,1);
+        background: rgba(238, 81, 71, 1);
 </style>

@@ -13,9 +13,9 @@
             <span class="price">￥30</span>服务费
           </div>
         </div>
-        <WaitOrderInfo>
+        <!--<WaitOrderInfo>
           <span slot="state" class="state">待分配</span>
-        </WaitOrderInfo>
+        </WaitOrderInfo>-->
         <OrderTime/>
         <div class="hint">提示：您的需求已经提交客服，正在为您匹配相应服务。请保持电话畅通，以便服务与您联系。</div>
         <OrderCourse/>
@@ -26,7 +26,6 @@
 
 <script>
   import BScroll from 'better-scroll'
-  import WaitOrderInfo from '../../../../components/WaitOrderInfo/WaitOrderInfo'
   import OrderTime from '../../../../components/OrderTime/OrderTime'
   import OrderCourse from '../../../../components/OrderCourse/OrderCourse'
 
@@ -45,7 +44,6 @@
       })
     },
     components: {
-      WaitOrderInfo,
       OrderTime,
       OrderCourse,
     }

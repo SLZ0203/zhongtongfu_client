@@ -13,7 +13,7 @@
 <script>
 
   export default {
-    name: "NeedHeader",
+    name: "TopHeader",
     props:{
       title: String
     },
@@ -32,19 +32,19 @@
   .header
     width 100%
     background rgba(255, 255, 255, 1)
-    padding 30px 16px 0
+    padding 15px 16px
     box-sizing border-box
     position relative
     z-index 100
     bottom-border-1px(#E5EAF3)
     .outer
       text-align center
-      padding-bottom 10px
       .return
         vertical-align middle
         position absolute
         left 16px
-        top 34px
+        top 50%
+        transform translateY(-50%)
       .header_title
         vertical-align middle
         font-size 18px

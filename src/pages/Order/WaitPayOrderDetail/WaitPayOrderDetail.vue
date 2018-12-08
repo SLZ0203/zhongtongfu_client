@@ -1,15 +1,15 @@
-<!--进行中订单详情页面-->
+<!--待支付订单详情页面-->
 <template>
-  <section class="detail_wrap" v-if="orderInfo">
+  <section class="detail_wrap">
     <TopHeader :title="title"/>
     <div class="scroll_wrap">
       <div>
         <div class="order_state">
-          <img src="../../../../static/images/icon_维修.png" alt="">
-          <p class="name">服务方案已确认！</p>
-          <div class="hint_msg">工程师正在施工过程中…</div>
+          <img src="../../../../static/images/icon_付款.png" alt="">
+          <p class="name" v-if="orderInfo.orderStateName === '待支付预约费'">待支付预约费！</p>
+          <p class="name" v-else>服务完成待支付！</p>
           <div class="btn_wrap">
-            <span @click="goSend">转争议</span>
+            <span class="three" @click="goSend">转争议</span>
           </div>
         </div>
         <div class="user_info" v-if="orderInfo.engineerAvatar">
@@ -27,6 +27,7 @@
         <OrderCourse :orderCourse="orderCourse"/>
       </div>
     </div>
+    <div class="ft_btn" @click="goPay">确认支付</div>
   </section>
 </template>
 
@@ -39,14 +40,16 @@
   import {postURL, token} from '../../../api'
 
   export default {
-    name: "BeingOrderDetail",
+    name: "DaiquerenOrderDetail",
     data() {
       return {
         title: '订单详情',
-        isShow: false,
+        showOne: true,
+        showTwo: true,
+        showThree: true,
         orderId: this.$route.query.id,//订单号
-        orderCourse: null,
-        orderInfo: {},
+        orderInfo: {},//订单详情列表
+        orderCourse: null,//订单历程
       }
     },
     created() {
@@ -68,6 +71,7 @@
           this.orderInfo = result.data;
         }
       });
+
       //获取订单历程的请求
       const url1 = postURL + '/api/order/listOrderCourse';
       this.$axios.post(url1, {
@@ -85,12 +89,21 @@
           this.orderCourse = result.data
         }
       });
+
     },
     methods: {
       goSend() {
         this.$router.push({
           path: '/submit_trouble',
           query: {orderInfo: this.orderInfo}
+        })
+      },
+      goPay() {
+        this.$router.push({
+          path: 'pay_page',
+          query: {
+            orderInfo: this.orderInfo
+          }
         })
       }
     },
@@ -103,9 +116,9 @@
     },
     components: {
       OrderCourse,
+      Starlet,
       AllOrderInfo,
-      ServerProject,
-      Starlet
+      ServerProject
     }
   }
 </script>
@@ -122,41 +135,7 @@
       height 610px
       overflow hidden
       .state
-        color: rgba(248, 162, 16, 1);
-      .order_state
-        width 100%
-        padding 16px
-        box-sizing border-box
-        background #fff
-        text-align: center
-        .name
-          margin 16px 0 8px
-          font-size: 16px;
-          font-family: PingFangSC-Medium;
-          font-weight: 500;
-          color: rgba(58, 61, 74, 1);
-          line-height: 22px;
-        .hint_msg
-          font-size: 14px;
-          font-family: PingFangSC-Regular;
-          font-weight: 400;
-          color: rgba(112, 117, 127, 1);
-          line-height: 22px;
-        .btn_wrap
-          margin-top 16px
-          span
-            font-size: 14px;
-            font-family: PingFangSC-Regular;
-            font-weight: 400;
-            color: rgba(112, 117, 127, 1);
-            text-align: center
-            line-height 32px
-            display inline-block
-            width: 130px;
-            height: 32px;
-            background: rgba(249, 251, 254, 1);
-            border-radius: 2px;
-            border: 1px solid #D7DBE3;
+        color: rgba(236, 88, 79, 1);
       .user_info
         width 100%
         display flex
@@ -183,39 +162,99 @@
             line-height: 20px;
             margin-bottom 3px
 
-    .order_msg
-      width 100%
-      margin-bottom 8px
-      padding 0 16px
-      box-sizing border-box
-      background #fff
-      .title
-        font-size: 16px;
-        font-weight: 500;
-        color: rgba(58, 61, 74, 1);
-        line-height: 48px;
-        width: 375px;
-        height: 48px;
-        bottom-border-1px($main)
-      .item_msg
+      .order_state
         width 100%
-        height 48px
-        display flex
-        align-items center
-        justify-content space-between
-        font-size: 14px;
-        bottom-border-1px($main)
+        padding 16px
+        box-sizing border-box
+        background #fff
+        text-align: center
+        margin-bottom 8px
         .name
-          color: rgba(112, 117, 127, 1);
-        .type, .problem
+          margin 16px 0 8px
+          font-size: 16px;
+          font-family: PingFangSC-Medium;
+          font-weight: 500;
           color: rgba(58, 61, 74, 1);
-    .hint
+          line-height: 22px;
+        .hint_msg
+          font-size: 14px;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: rgba(112, 117, 127, 1);
+          line-height: 22px;
+          .price
+            font-weight: 500;
+            color: rgba(236, 88, 79, 1);
+        .btn_wrap
+          margin-top 16px
+          span
+            font-size: 14px;
+            font-family: PingFangSC-Regular;
+            font-weight: 400;
+            color: rgba(112, 117, 127, 1);
+            text-align: center
+            line-height 32px
+            display inline-block
+            width: 130px;
+            height: 32px;
+            background: rgba(249, 251, 254, 1);
+            border-radius: 2px;
+            border: 1px solid #D7DBE3;
+          .three
+            width 130px
+          .redbor
+            border: 1px solid #EE5147
+            color: rgba(238, 81, 71, 1);
+            background: rgba(255, 255, 255, 1);
+      .time_wrap
+        width 100%
+        background-color rgba(255, 255, 255, 1)
+        .order_time
+          width 100%
+          height 48px
+          line-height 48px
+          padding 0 17px
+          box-sizing border-box
+          bottom-border-1px(#E5EAF3)
+          span
+            margin-left 4px
+            font-size 16px
+            font-family PingFangSC-Medium
+            font-weight 500
+            color rgba(58, 61, 74, 1)
+            line-height 22px
+        .start_end_time
+          width 375px
+          height 56px
+          display flex
+          margin-bottom 8px
+          background-image url("../../../../static/images/icon_大箭头.png")
+          background-repeat no-repeat
+          background-position 50%
+          box-shadow 0 0 0 0 rgba(229, 234, 243, 1)
+          .start, .end
+            width 50%
+            line-height 28px
+            p
+              text-align center
+              font-size 16px
+              font-family PingFangSC-Regular
+              font-weight 400
+              color rgba(161, 167, 179, 1)
+            .time_num
+              font-weight 600
+              color rgba(236, 88, 79, 1)
+              line-height 22px
+    .ft_btn
+      position fixed
+      bottom 0
       width 100%
-      padding 0 16px
-      box-sizing border-box
-      font-size: 12px;
-      font-family: PingFangSC-Regular;
-      font-weight: 400;
-      color: rgba(161, 167, 179, 1);
-      line-height: 18px;
+      height 50px
+      text-align: center
+      line-height 50px
+      background $red
+      font-size: 16px;
+      font-family: PingFangSC-Medium;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 1);
 </style>

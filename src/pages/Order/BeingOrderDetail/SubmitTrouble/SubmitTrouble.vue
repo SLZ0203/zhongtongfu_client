@@ -3,11 +3,9 @@
   <section class="back_wrap">
     <TopHeader :title="title"/>
     <div class="scroll_wrap">
-      <FinishOrderInfo>
-        <span slot="state" class="state">待确认上门</span>
-      </FinishOrderInfo>
+      <AllOrderInfo :orderInfo="orderInfo"/>
       <div class="text_wrap">
-        <textarea cols="30" rows="10" placeholder="请输入您的申报原因~"></textarea>
+        <textarea cols="30" rows="10" placeholder="请输入您的申报原因~" v-model="sendText"></textarea>
         <div class="photo_wrap">
           <div class="photo_"></div>
           <div>
@@ -17,27 +15,57 @@
         </div>
       </div>
     </div>
-    <div class="ft_btn on">提交</div>
+    <div class="ft_btn" @click="sendTrouble" :class="{on: sendText.length>0}">提交</div>
   </section>
 </template>
 
 <script>
-  import FinishOrderInfo from '../../../../components/FinishOrderInfo/FinishOrderInfo'
+  import AllOrderInfo from '../../../../components/AllOrderInfo/AllOrderInfo'
+  import {postURL, token} from '../../../../api'
+  import {Toast} from 'mint-ui'
 
   export default {
     name: "SubmitTrouble",
     data() {
       return {
-        title: '故障申报'
+        title: '故障申报',
+        orderInfo: this.$route.query.orderInfo,
+        sendText: ''
       }
     },
     methods: {
-      change(e) {
-        e.target.className = 'checked on'
+      //点击提交按钮发送申报
+      sendTrouble() {
+        const url = postURL + '/api/order/turnOrderDispute';
+        const {sendText, orderInfo} = this;
+        const id = orderInfo.orderId;
+        if (sendText.length <= 0) {
+          return
+        } else {
+          this.$axios.post(url, {
+              "data": {
+                "imageId": [],
+                "orderId": id,
+                "remark": sendText
+              },
+              "requestId": new Date().getTime(),
+            },
+            {
+              headers: {
+                token
+              }
+            }
+          ).then(res => {
+            const result = res.data;
+            if (result.code === 200) {
+              Toast('提交成功')
+            }
+          })
+        }
       }
     },
     components: {
-      FinishOrderInfo,
+      AllOrderInfo
     }
   }
 </script>
@@ -52,6 +80,32 @@
       height 603px
       .state
         color: rgba(248, 162, 16, 1);
+      .order_msg
+        width 100%
+        margin-bottom 8px
+        padding 0 16px
+        box-sizing border-box
+        background #fff
+        .title
+          font-size: 16px;
+          font-weight: 500;
+          color: rgba(58, 61, 74, 1);
+          line-height: 48px;
+          width: 375px;
+          height: 48px;
+          bottom-border-1px($main)
+        .item_msg
+          width 100%
+          height 48px
+          display flex
+          align-items center
+          justify-content space-between
+          font-size: 14px;
+          bottom-border-1px($main)
+          .name
+            color: rgba(112, 117, 127, 1);
+          .type, .problem
+            color: rgba(58, 61, 74, 1);
       .text_wrap
         width 100%
         padding 0 16px 48px 16px

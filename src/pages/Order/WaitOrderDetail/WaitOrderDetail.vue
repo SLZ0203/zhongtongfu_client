@@ -5,7 +5,7 @@
     <div class="scroll_wrap">
       <div>
         <!--预约服务订单提交成功-->
-        <div class="order_state" v-show="showOne">
+        <div class="order_state">
           <img src="../../../../static/images/icon_成功.png" alt="">
           <p class="name">预约服务定订单提交成功！</p>
           <div class="hint_msg">
@@ -14,17 +14,17 @@
             <span class="price">￥30</span>服务费
           </div>
           <div class="btn_wrap">
-            <span @click="urge">催 单</span>
+            <span @click="urgeOrder">催 单</span>
             <span>取消订单</span>
           </div>
         </div>
-        <!--上门服务时间确认-->
-        <div class="order_state" v-show="showTwo">
+        <!--&lt;!&ndash;上门服务时间确认&ndash;&gt;
+        <div class="order_state">
           <img src="../../../../static/images/icon_时间1.png" alt="">
           <p class="name">上门服务时间确认！</p>
           <div class="hint_msg">
             服务工程师将于
-            <span class="price">2018-09-30 09:30</span>
+            <span class="price">{{orderInfo.confirmTime}}</span>
             进行上门服务，您是否同意？
           </div>
           <div class="btn_wrap">
@@ -33,22 +33,48 @@
             <span class="three redbor" @click="hadPlan">同 意</span>
           </div>
         </div>
-        <!--已安排工程师-->
-        <div class="order_state" v-show="showThree">
+        &lt;!&ndash;已安排工程师&ndash;&gt;
+        <div class="order_state">
           <img src="../../../../static/images/icon_成功.png" alt="">
           <p class="name">已安排工程师！</p>
           <div class="hint_msg">
             工程师将于
-            <span class="price">2018-09-30 09:30</span>
+            <span class="price">{{orderInfo.confirmTime}}</span>
             上门服务
           </div>
           <div class="btn_wrap">
             <span class="three">申请退单</span>
           </div>
+        </div>-->
+        <div class="user_info" v-if="orderInfo.engineerAvatar">
+          <div class="left_wrap">
+            <img :src="orderInfo.engineerAvatar" class="touxiang">
+            <div>
+              <p class="user_name">{{orderInfo.engineerName}}</p>
+              <Starlet :score=orderInfo.totalScore></Starlet>
+            </div>
+          </div>
+          <img src="../../../../static/images/icon__联系.png" alt="">
         </div>
-        <WaitOrderInfo>
-          <span slot="state" class="state">待分配</span>
-        </WaitOrderInfo>
+        <ul class="order_msg">
+          <li class="title">订单信息</li>
+          <li class="item_msg">
+            <span class="name">订单号</span>
+            <span class="num">{{orderInfo.orderId}}</span>
+          </li>
+          <li class="item_msg">
+            <span class="name">订单状态</span>
+            <span class="state">{{orderInfo.orderStateName}}</span>
+          </li>
+          <li class="item_msg">
+            <span class="name">服务类型</span>
+            <span class="type">其他</span>
+          </li>
+          <li class="item_msg">
+            <span class="name">问题描述</span>
+            <span class="problem">家中网线时有时无，屏幕闪烁不断</span>
+          </li>
+        </ul>
         <div class="time_wrap">
           <div class="order_time">
             <img src="../../../../static/images/icon_时间2.png" alt="">
@@ -58,19 +84,19 @@
             <div class="start">
               <p>预约开始时间</p>
               <p class="time_num">
-                {{endHours ? startMonth+'-'+startDay+'-'+startHours:'10-30 12:00'}}
+                {{endHours ? startMonth+'-'+startDay+'-'+startHours:orderInfo.startTime}}
               </p>
             </div>
             <div class="end">
               <p>预约结束时间</p>
               <p class="time_num">
-                {{endHours ? endMonth+'-'+endDay+'-'+endHours:'10-30 12:00'}}
+                {{endHours ? endMonth+'-'+endDay+'-'+endHours:orderInfo.endTime}}
               </p>
             </div>
           </div>
         </div>
         <div class="hint">提示：您的需求已经提交客服，正在为您匹配相应服务。请保持电话畅通，以便服务与您联系。</div>
-        <OrderCourse/>
+        <OrderCourse :orderCourse="orderCourse"/>
       </div>
     </div>
     <Shade v-show="popupShow||isStartShow||isEndShow"/>
@@ -101,20 +127,20 @@
 
 <script>
   import BScroll from 'better-scroll'
-  import WaitOrderInfo from '../../../components/WaitOrderInfo/WaitOrderInfo'
   import OrderCourse from '../../../components/OrderCourse/OrderCourse'
   import Shade from '../../../components/Shade/Shade'
-  import {postURL} from '../../../api'
+  import Starlet from '../../../components/Starlet/Starlet'
+  import {postURL, token} from '../../../api'
   import {Toast} from 'mint-ui';
 
   export default {
-    name: "MyOrder",
+    name: "WaitOrderDetail",
     data() {
       return {
         title: '订单详情',
-        showOne: true,
-        showTwo: false,
-        showThree: false,
+        orderId: this.$route.query.id,//订单号
+        orderInfo: [],//订单详情列表
+        orderCourse: null,//订单历程
         popupShow: false,//弹窗切换显示、隐藏
         isStartShow: false,//选择预约开始时间显示/隐藏
         isEndShow: false,//选择预约结束时间显示/隐藏
@@ -147,6 +173,45 @@
           }
         ]
       }
+    },
+    created() {
+      //获取订单详情的请求
+      const {orderId} = this;
+      const url2 = postURL + '/api/order/getOrderDetail';
+      this.$axios.post(url2, {
+          "data": orderId,
+          "requestId": new Date().getTime(),
+        },
+        {
+          headers: {
+            token
+          }
+        }
+      ).then(res => {
+        const result = res.data;
+        if (result.code === 200) {
+          this.orderInfo = result.data;
+        }
+      });
+
+      //获取订单历程的请求
+      const url1 = postURL + '/api/order/listOrderCourse';
+      this.$axios.post(url1, {
+          "data": orderId,
+          "requestId": new Date().getTime(),
+        },
+        {
+          headers: {
+            token
+          }
+        }
+      ).then(res => {
+        const result = res.data;
+        if (result.code === 200) {
+          this.orderCourse = result.data
+        }
+      });
+
     },
     methods: {
       onStartValuesChange(picker, values) {
@@ -182,15 +247,17 @@
         this.showThree = true
       },
       /*催单请求*/
-      urge() {
+      urgeOrder() {
+        const {orderInfo} = this;
+        const orderId = orderInfo.orderId;
         const url = postURL + '/api/order/urgeOrder';
         this.$axios.post(url, {
-            "data": "B20181205000011",
+            "data": orderId,
             "requestId": new Date().getTime(),
           },
           {
             headers: {
-              token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpblR5cGUiOiI5IiwiaXNzIjoienRmZ2ouY29tIiwiZXhwIjoxNTQ1MzYwMTYyLCJ1c2VySWQiOiI1MDc5OTQ3NjQ2Mjc5NjgiLCJpYXQiOjE1NDQwNjQxNjJ9.2DRihlD6pUf6Lvtgh_rIedUB073lnUmY_NXy0Y9HOxc",
+              token
             }
           }
         ).then(res => {
@@ -214,9 +281,9 @@
       })
     },
     components: {
-      WaitOrderInfo,
       OrderCourse,
-      Shade
+      Shade,
+      Starlet
     }
   }
 </script>
@@ -234,6 +301,32 @@
       overflow hidden
       .state
         color: rgba(236, 88, 79, 1);
+      .user_info
+        width 100%
+        display flex
+        justify-content space-between
+        align-items center
+        margin 8px 0
+        padding 13px 27px 13px 16px
+        box-sizing border-box
+        background: rgba(255, 255, 255, 1);
+        .touxiang
+          width: 40px;
+          height: 40px;
+          border-radius 50%
+          margin-right 8px
+        .left_wrap
+          height 100%
+          display flex
+          align-items center
+          .user_name
+            font-size: 14px;
+            font-family: PingFangSC-Medium;
+            font-weight: 500;
+            color: rgba(58, 61, 74, 1);
+            line-height: 20px;
+            margin-bottom 3px
+
       .order_state
         width 100%
         padding 16px
@@ -278,6 +371,36 @@
             border: 1px solid #EE5147
             color: rgba(238, 81, 71, 1);
             background: rgba(255, 255, 255, 1);
+      .order_msg
+        width 100%
+        margin-bottom 8px
+        background #fff
+        .title
+          margin-top 8px
+          font-size: 16px;
+          font-weight: 500;
+          color: rgba(58, 61, 74, 1);
+          line-height: 48px;
+          width: 375px;
+          height: 48px;
+          padding 0 16px
+          box-sizing border-box
+          bottom-border-1px($main)
+        .item_msg
+          width 100%
+          height 48px
+          display flex
+          padding-left 16px
+          box-sizing border-box
+          align-items center
+          justify-content space-between
+          padding-right 16px
+          font-size: 14px;
+          bottom-border-1px($main)
+          .name
+            color: rgba(112, 117, 127, 1);
+          .type, .problem
+            color: rgba(58, 61, 74, 1);
       .hint
         width 100%
         padding 0 16px

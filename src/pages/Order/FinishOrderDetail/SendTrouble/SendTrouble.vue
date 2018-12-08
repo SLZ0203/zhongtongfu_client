@@ -2,9 +2,9 @@
 <template>
   <section class="send_wrap">
     <TopHeader :title="title"/>
-    <FinishOrderInfo>
+    <AllOrderInfo>
       <span slot="state" class="state">已完成</span>
-    </FinishOrderInfo>
+    </AllOrderInfo>
     <div class="text_wrap">
       <textarea cols="30" rows="10" placeholder="请输入您的申报原因~"></textarea>
       <div class="photo_wrap">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import FinishOrderInfo from '../../../../components/FinishOrderInfo/FinishOrderInfo'
+  import AllOrderInfo from '../../../../components/AllOrderInfo/AllOrderInfo'
   import TextWrap from '../../../../components/TextWrap/TextWrap'
   import SubmitBtn from '../../../../components/SubmitBtn/SubmitBtn'
   export default {
@@ -31,7 +31,7 @@
       }
     },
     components: {
-      FinishOrderInfo,
+      AllOrderInfo,
       TextWrap,
       SubmitBtn
     }
